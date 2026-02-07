@@ -1,381 +1,414 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Surendhar ❤️ Pavithra - Valentine Week</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#ff4d6d">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <title>Surendhar ❤️ Pavithra - Valentine Week</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ff4d6d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=2.1">
 </head>
+
 <body>
 
-<!-- Animated Hearts Background -->
-<div class="hearts-bg" id="heartsBg"></div>
+  <!-- Animated Hearts Background -->
+  <div class="hearts-bg" id="heartsBg"></div>
 
-<!-- Particle Effects -->
-<canvas id="particleCanvas"></canvas>
+  <!-- Particle Effects -->
+  <canvas id="particleCanvas"></canvas>
 
-<!-- Music Player -->
-<div class="music-player" id="musicPlayer">
-  <button class="music-btn" id="musicBtn" onclick="toggleMusic()">
-    <span class="music-icon">🎵</span>
-    <span class="music-wave">
-      <span></span><span></span><span></span>
-    </span>
-  </button>
-  <!-- Hidden audio upload -->
-  <input type="file" id="audioUpload" accept="audio/*" onchange="loadCustomAudio(this)" style="display:none;">
-</div>
-
-<!-- Settings Button -->
-<button class="settings-btn" id="settingsBtn" onclick="toggleSettings()">⚙️</button>
-
-<!-- Settings Panel -->
-<div class="settings-panel hidden" id="settingsPanel">
-  <div class="settings-content">
-    <h3>🎨 Customize App</h3>
-    
-    <!-- Background Image Upload -->
-    <div class="setting-item">
-      <label>🖼️ Background Image</label>
-      <div class="upload-box" onclick="document.getElementById('bgImageUpload').click()">
-        <span>📷 Upload Image</span>
-      </div>
-      <input type="file" id="bgImageUpload" accept="image/*" onchange="setBackgroundImage(this)" style="display:none;">
-      <button class="reset-btn" onclick="resetBackground()">Reset Background</button>
-    </div>
-    
-    <!-- Audio Upload -->
-    <div class="setting-item">
-      <label>🎵 Background Music</label>
-      <div class="upload-box" onclick="document.getElementById('audioUpload').click()">
-        <span>🎶 Upload Audio</span>
-      </div>
-      <p class="setting-hint">MP3, WAV, OGG supported</p>
-    </div>
-    
-    <!-- Volume Control -->
-    <div class="setting-item">
-      <label>🔊 Music Volume</label>
-      <input type="range" id="volumeSlider" min="0" max="100" value="30" onchange="setVolume(this.value)">
-      <span id="volumeValue">30%</span>
-    </div>
-    
-    <button class="close-settings" onclick="toggleSettings()">✕ Close</button>
-  </div>
-</div>
-
-<!-- PWA Install Button -->
-<button id="installBtn" class="install-btn hidden">
-  <span class="install-icon">📲</span> Install App
-</button>
-
-<!-- Lock Screen -->
-<div id="lockScreen" class="lock-screen">
-  <div class="lock-container">
-    <div class="lock-heart">
-      <div class="heart-icon">💝</div>
-    </div>
-    <h2>For My Pavithra 💕</h2>
-    <p class="lock-hint">Enter PIN to unlock your surprise</p>
-    <div class="pin-input-container">
-      <input type="password" id="pinInput" placeholder="••••" maxlength="4">
-    </div>
-    <button onclick="unlock()" class="unlock-btn">
-      <span>Unlock My Heart</span>
-      <span class="btn-hearts">💕</span>
+  <!-- Music Player -->
+  <div class="music-player" id="musicPlayer">
+    <button class="music-btn" id="musicBtn" onclick="toggleMusic()">
+      <span class="music-icon">🎵</span>
+      <span class="music-wave">
+        <span></span><span></span><span></span>
+      </span>
     </button>
-    <p class="pin-hint">From: Surendhar with love ❤️</p>
+    <button class="music-btn" id="lyricsBtn" onclick="toggleLyrics()" style="margin-left: 10px;">
+      <span class="music-icon">🎤</span>
+    </button>
+    <!-- Hidden audio upload -->
+    <input type="file" id="audioUpload" accept="audio/*" onchange="loadCustomAudio(this)" style="display:none;">
   </div>
-</div>
 
-<!-- Main App -->
-<div id="app" class="hidden">
-  <!-- Header -->
-  <header class="app-header">
-    <h1 class="main-title">
-      <span class="title-heart">💖</span>
-      Valentine Week
-      <span class="title-heart">💖</span>
-    </h1>
-    <p class="subtitle">Surendhar ❤️ Pavithra</p>
-    <p class="subtitle-date">February 7 - 14, 2026</p>
-    
-    <!-- Countdown Timer -->
-    <div class="countdown-container">
-      <div class="countdown-label">Valentine's Day Countdown</div>
-      <div class="countdown" id="countdown">
-        <div class="time-box">
-          <span id="countDays">0</span>
-          <small>Days</small>
-        </div>
-        <div class="time-box">
-          <span id="countHours">0</span>
-          <small>Hours</small>
-        </div>
-        <div class="time-box">
-          <span id="countMins">0</span>
-          <small>Mins</small>
-        </div>
-        <div class="time-box">
-          <span id="countSecs">0</span>
-          <small>Secs</small>
-        </div>
-      </div>
+  <!-- Lyrics Panel -->
+  <div class="lyrics-panel hidden" id="lyricsPanel">
+    <div class="lyrics-header">
+      <h3>🎤 Song Lyrics</h3>
+      <button class="close-lyrics" onclick="toggleLyrics()">✕</button>
     </div>
-    
-    <!-- Special Effects Buttons -->
-    <div class="effects-bar">
-      <button class="effect-btn" onclick="triggerConfetti()">🎊 Confetti</button>
-      <button class="effect-btn" onclick="triggerFireworks()">🎆 Fireworks</button>
-      <button class="effect-btn" onclick="triggerHeartBurst()">💕 Hearts</button>
-      <button class="effect-btn" onclick="triggerRose()">🌹 Roses</button>
+    <div class="lyrics-body">
+      <textarea id="lyricsInput" placeholder="Paste your song lyrics here..."></textarea>
+      <div id="lyricsDisplay" class="hidden"></div>
     </div>
-  </header>
+    <div class="lyrics-footer">
+      <button class="action-btn" onclick="saveLyrics()">💾 Save</button>
+      <button class="action-btn" onclick="editLyrics()">✏️ Edit</button>
+      <button class="action-btn" onclick="clearLyrics()">🗑️ Clear</button>
+    </div>
+  </div>
 
-  <!-- Navigation Tabs -->
-  <nav class="tabs">
-    <button class="tab active" data-tab="days">📅 Days</button>
-    <button class="tab" data-tab="messages">💌 Messages</button>
-    <button class="tab" data-tab="photo">📸 Photo</button>
-    <button class="tab" data-tab="video">🎬 Video</button>
-    <button class="tab" data-tab="extras">🎁 Extras</button>
-  </nav>
+  <!-- Settings Button -->
+  <button class="settings-btn" id="settingsBtn" onclick="toggleSettings()">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="#ff4d6d">
+      <path
+        d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
+    </svg>
+  </button>
 
-  <!-- Days Section -->
-  <section id="daysSection" class="section active">
-    <div class="days-grid" id="days"></div>
-  </section>
+  <!-- Settings Panel -->
+  <div class="settings-panel hidden" id="settingsPanel">
+    <div class="settings-content">
+      <h3>🎨 Customize App</h3>
 
-  <!-- AI Messages Section -->
-  <section id="messagesSection" class="section hidden">
-    <div class="card glass-card">
-      <h2 class="section-title">🤖 AI Love Message Generator</h2>
-      
-      <div class="input-group">
-        <label>Your Partner's Name</label>
-        <input type="text" id="partnerName" placeholder="Enter name..." value="Pavithra">
+      <!-- Background Image Upload -->
+      <div class="setting-item">
+        <label>🖼️ Background Image</label>
+        <div class="upload-box" onclick="document.getElementById('bgImageUpload').click()">
+          <span>📷 Upload Image</span>
+        </div>
+        <input type="file" id="bgImageUpload" accept="image/*" onchange="setBackgroundImage(this)"
+          style="display:none;">
+        <button class="reset-btn" onclick="resetBackground()">Reset Background</button>
       </div>
-      
-      <!-- Message Language -->
-      <div class="language-selector" style="margin-bottom: 15px;">
-        <button class="lang-btn active" data-msglang="english" onclick="setMsgLanguage('english')">🇬🇧 English</button>
-        <button class="lang-btn" data-msglang="tamil" onclick="setMsgLanguage('tamil')">🇮🇳 தமிழ்</button>
-        <button class="lang-btn" data-msglang="tanglish" onclick="setMsgLanguage('tanglish')">🔤 Tanglish</button>
+
+      <!-- Audio Upload -->
+      <div class="setting-item">
+        <label>🎵 Background Music</label>
+        <div class="upload-box" onclick="document.getElementById('audioUpload').click()">
+          <span>🎶 Upload Audio</span>
+        </div>
+        <p class="setting-hint">MP3, WAV, OGG supported</p>
+        <button class="reset-btn" onclick="resetMusic()" style="margin-top: 10px;">Reset Music</button>
       </div>
-      
-      <div class="message-types">
-        <button class="type-btn active" data-type="romantic">💕 Romantic</button>
-        <button class="type-btn" data-type="funny">😄 Funny</button>
-        <button class="type-btn" data-type="poetic">📝 Poetic</button>
-        <button class="type-btn" data-type="sweet">🍬 Sweet</button>
+
+      <!-- Volume Control -->
+      <div class="setting-item">
+        <label>🔊 Music Volume</label>
+        <input type="range" id="volumeSlider" min="0" max="100" value="30" onchange="setVolume(this.value)">
+        <span id="volumeValue">30%</span>
       </div>
-      
-      <button onclick="generateMessage()" class="generate-btn">
-        <span class="sparkle">✨</span> Generate Message <span class="sparkle">✨</span>
+
+      <button class="close-settings" onclick="toggleSettings()">✕ Close</button>
+    </div>
+  </div>
+
+  <!-- PWA Install Button -->
+  <button id="installBtn" class="install-btn hidden">
+    <span class="install-icon">📲</span> Install App
+  </button>
+
+  <!-- Lock Screen -->
+  <div id="lockScreen" class="lock-screen">
+    <div class="lock-container">
+      <div class="lock-heart">
+        <div class="heart-icon">💝</div>
+      </div>
+      <h2>For My Pavithra 💕</h2>
+      <p class="lock-hint">Enter PIN to unlock your surprise</p>
+      <div class="pin-input-container">
+        <input type="password" id="pinInput" placeholder="••••" maxlength="4">
+      </div>
+      <button onclick="unlock()" class="unlock-btn">
+        <span>Unlock My Heart</span>
+        <span class="btn-hearts">💕</span>
       </button>
-      
-      <div class="message-output" id="messageOutput">
-        <p id="aiMessage">Click generate to create a beautiful message...</p>
-      </div>
-      
-      <div class="message-actions">
-        <button onclick="copyMessage()" class="action-btn">📋 Copy</button>
-        <button onclick="shareMessage()" class="action-btn">📤 Share</button>
-        <button onclick="speakMessage()" class="action-btn">🔊 Speak</button>
-      </div>
+      <p class="pin-hint">From: Surendhar with love ❤️</p>
     </div>
-    
-    <!-- Love Letter Generator -->
-    <div class="card glass-card">
-      <h2 class="section-title">💌 Love Letter Generator</h2>
-      
-      <!-- Language Selector -->
-      <div class="language-selector">
-        <button class="lang-btn active" data-lang="english" onclick="setLanguage('english')">
-          🇬🇧 English
-        </button>
-        <button class="lang-btn" data-lang="tamil" onclick="setLanguage('tamil')">
-          🇮🇳 தமிழ்
-        </button>
-        <button class="lang-btn" data-lang="tanglish" onclick="setLanguage('tanglish')">
-          🔤 Tanglish
-        </button>
-      </div>
-      
-      <div class="input-group">
-        <label id="feelingLabel">How do you feel?</label>
-        <select id="feelingSelect">
-          <option value="deeply">Deeply in love / ஆழமான காதல்</option>
-          <option value="grateful">Grateful / நன்றியுள்ள</option>
-          <option value="missing">Missing them / நினைவு</option>
-          <option value="excited">Excited about future / எதிர்காலம்</option>
-        </select>
-      </div>
-      <button onclick="generateLetter()" class="generate-btn">
-        📜 Generate Love Letter
-      </button>
-      <div class="letter-output" id="letterOutput"></div>
-      
-      <!-- Copy & Share -->
-      <div class="letter-actions">
-        <button onclick="copyLetter()" class="action-btn">📋 Copy</button>
-        <button onclick="shareLetter()" class="action-btn">📤 Share</button>
-        <button onclick="speakLetter()" class="action-btn">🔊 Read Aloud</button>
-      </div>
-    </div>
-  </section>
+  </div>
 
-  <!-- Photo Frame Section -->
-  <section id="photoSection" class="section hidden">
-    <div class="card glass-card">
-      <h2 class="section-title">📸 Valentine Photo Frame</h2>
-      
-      <div class="frame-selector">
-        <button class="frame-btn active" data-frame="hearts">💕 Hearts</button>
-        <button class="frame-btn" data-frame="roses">🌹 Roses</button>
-        <button class="frame-btn" data-frame="cupid">💘 Cupid</button>
-        <button class="frame-btn" data-frame="elegant">✨ Elegant</button>
-      </div>
-      
-      <div class="upload-area" id="uploadArea">
-        <input type="file" id="photoInput" accept="image/*">
-        <div class="upload-content">
-          <span class="upload-icon">📷</span>
-          <p>Click or drag photo here</p>
-        </div>
-      </div>
-      
-      <div class="canvas-container">
-        <canvas id="canvas"></canvas>
-      </div>
-      
-      <div class="photo-actions">
-        <button onclick="downloadPhoto()" class="action-btn primary">
-          💾 Download
-        </button>
-        <button onclick="resetPhoto()" class="action-btn">
-          🔄 Reset
-        </button>
-      </div>
-    </div>
-  </section>
+  <!-- Main App -->
+  <div id="app" class="hidden">
+    <!-- Header -->
+    <header class="app-header">
+      <h1 class="main-title">
+        <span class="title-heart">💖</span>
+        Valentine Week
+        <span class="title-heart">💖</span>
+      </h1>
+      <p class="subtitle">Surendhar ❤️ Pavithra</p>
+      <p class="subtitle-date">February 7 - 14, 2026</p>
 
-  <!-- Video Section -->
-  <section id="videoSection" class="section hidden">
-    <div class="card glass-card">
-      <h2 class="section-title">🎬 Our Love Story</h2>
-      
-      <!-- Video Player -->
-      <div class="video-container">
-        <div class="video-placeholder" id="videoPlaceholder" onclick="playVideo()">
-          <div class="play-button">
-            <span>▶</span>
+      <!-- Countdown Timer -->
+      <div class="countdown-container">
+        <div class="countdown-label">Valentine's Day Countdown</div>
+        <div class="countdown" id="countdown">
+          <div class="time-box">
+            <span id="countDays">0</span>
+            <small>Days</small>
           </div>
-          <p>Click to play romantic video</p>
-        </div>
-        <video id="loveVideo" class="love-video hidden" controls>
-          <source src="" type="video/mp4">
-        </video>
-      </div>
-      
-      <!-- Upload Custom Video -->
-      <div class="video-upload">
-        <label class="upload-label">
-          <input type="file" id="videoInput" accept="video/*" onchange="loadCustomVideo(this)">
-          <span>📹 Upload Our Video</span>
-        </label>
-      </div>
-      
-      <!-- Romantic YouTube Videos -->
-      <h3 class="subsection-title">💕 Romantic Vibes</h3>
-      <div class="video-grid">
-        <div class="video-card" onclick="openYouTube('dQw4w9WgXcQ')">
-          <div class="video-thumb">🎵</div>
-          <p>Love Songs Mix</p>
-        </div>
-        <div class="video-card" onclick="openYouTube('450p7goxZqg')">
-          <div class="video-thumb">💑</div>
-          <p>Romantic Moments</p>
-        </div>
-        <div class="video-card" onclick="openYouTube('rtOvBOTyX00')">
-          <div class="video-thumb">🌹</div>
-          <p>Valentine Special</p>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Memory Slideshow -->
-    <div class="card glass-card">
-      <h2 class="section-title">📸 Memory Slideshow</h2>
-      <div class="slideshow-container">
-        <div class="slideshow-upload">
-          <input type="file" id="slideshowInput" accept="image/*" multiple onchange="loadSlideshow(this)">
-          <div class="upload-prompt">
-            <span>📷</span>
-            <p>Upload photos for slideshow</p>
+          <div class="time-box">
+            <span id="countHours">0</span>
+            <small>Hours</small>
+          </div>
+          <div class="time-box">
+            <span id="countMins">0</span>
+            <small>Mins</small>
+          </div>
+          <div class="time-box">
+            <span id="countSecs">0</span>
+            <small>Secs</small>
           </div>
         </div>
-        <div class="slideshow" id="slideshow"></div>
-        <div class="slideshow-controls hidden" id="slideshowControls">
-          <button onclick="prevSlide()">⬅️</button>
-          <button onclick="toggleSlideshow()">⏯️</button>
-          <button onclick="nextSlide()">➡️</button>
+      </div>
+
+      <!-- Special Effects Buttons -->
+      <div class="effects-bar">
+        <button class="effect-btn" onclick="triggerConfetti()">🎊 Confetti</button>
+        <button class="effect-btn" onclick="triggerFireworks()">🎆 Fireworks</button>
+        <button class="effect-btn" onclick="triggerHeartBurst()">💕 Hearts</button>
+        <button class="effect-btn" onclick="triggerRose()">🌹 Roses</button>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="tabs">
+      <button class="tab active" data-tab="days">📅 Days</button>
+      <button class="tab" data-tab="messages">💌 Messages</button>
+      <button class="tab" data-tab="photo">📸 Photo</button>
+      <button class="tab" data-tab="video">🎬 Video</button>
+      <button class="tab" data-tab="extras">🎁 Extras</button>
+    </nav>
+
+    <!-- Days Section -->
+    <section id="daysSection" class="section active">
+      <div class="days-grid" id="days"></div>
+    </section>
+
+    <!-- AI Messages Section -->
+    <section id="messagesSection" class="section hidden">
+      <div class="card glass-card">
+        <h2 class="section-title">🤖 AI Love Message Generator</h2>
+
+        <div class="input-group">
+          <label>Your Partner's Name</label>
+          <input type="text" id="partnerName" placeholder="Enter name..." value="Pavithra">
+        </div>
+
+        <!-- Message Language -->
+        <div class="language-selector" style="margin-bottom: 15px;">
+          <button class="lang-btn active" data-msglang="english" onclick="setMsgLanguage('english')">🇬🇧
+            English</button>
+          <button class="lang-btn" data-msglang="tamil" onclick="setMsgLanguage('tamil')">🇮🇳 தமிழ்</button>
+          <button class="lang-btn" data-msglang="tanglish" onclick="setMsgLanguage('tanglish')">🔤 Tanglish</button>
+        </div>
+
+        <div class="message-types">
+          <button class="type-btn active" data-type="romantic">💕 Romantic</button>
+          <button class="type-btn" data-type="funny">😄 Funny</button>
+          <button class="type-btn" data-type="poetic">📝 Poetic</button>
+          <button class="type-btn" data-type="sweet">🍬 Sweet</button>
+        </div>
+
+        <button onclick="generateMessage()" class="generate-btn">
+          <span class="sparkle">✨</span> Generate Message <span class="sparkle">✨</span>
+        </button>
+
+        <div class="message-output" id="messageOutput">
+          <p id="aiMessage">Click generate to create a beautiful message...</p>
+        </div>
+
+        <div class="message-actions">
+          <button onclick="copyMessage()" class="action-btn">📋 Copy</button>
+          <button onclick="shareMessage()" class="action-btn">📤 Share</button>
+          <button onclick="speakMessage()" class="action-btn">🔊 Speak</button>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- Extras Section -->
-  <section id="extrasSection" class="section hidden">
-    <!-- Love Calculator -->
-    <div class="card glass-card">
-      <h2 class="section-title">💕 Love Compatibility</h2>
-      <div class="calc-inputs">
-        <input type="text" id="name1" placeholder="Your name" value="Surendhar">
-        <span class="heart-divider">💗</span>
-        <input type="text" id="name2" placeholder="Partner's name" value="Pavithra">
-      </div>
-      <button onclick="calculateLove()" class="generate-btn">
-        Calculate Love 💘
-      </button>
-      <div class="love-result" id="loveResult"></div>
-    </div>
-    
-    <!-- Gift Surprise -->
-    <div class="card glass-card">
-      <h2 class="section-title">🎁 Mystery Gift</h2>
-      <p class="gift-desc">Click to reveal a special surprise!</p>
-      <div class="gift-box" id="giftBox" onclick="showGift()">
-        <div class="gift-lid">🎀</div>
-        <div class="gift-body">🎁</div>
-      </div>
-      <div class="gift-content" id="giftContent"></div>
-    </div>
-    
-    <!-- Daily Quote -->
-    <div class="card glass-card">
-      <h2 class="section-title">💭 Daily Love Quote</h2>
-      <div class="quote-container" id="dailyQuote">
-        <p class="quote-text">"Loading today's quote..."</p>
-        <p class="quote-author">- Anonymous</p>
-      </div>
-      <button onclick="newQuote()" class="action-btn">🔄 New Quote</button>
-    </div>
-  </section>
+      <!-- Love Letter Generator -->
+      <div class="card glass-card">
+        <h2 class="section-title">💌 Love Letter Generator</h2>
 
-  <!-- Footer -->
-  <footer class="app-footer">
-    <p>Made with 💖 by Surendhar for Pavithra</p>
-    <p class="footer-love">Forever & Always ∞</p>
-  </footer>
-</div>
+        <!-- Language Selector -->
+        <div class="language-selector">
+          <button class="lang-btn active" data-lang="english" onclick="setLanguage('english')">
+            🇬🇧 English
+          </button>
+          <button class="lang-btn" data-lang="tamil" onclick="setLanguage('tamil')">
+            🇮🇳 தமிழ்
+          </button>
+          <button class="lang-btn" data-lang="tanglish" onclick="setLanguage('tanglish')">
+            🔤 Tanglish
+          </button>
+        </div>
 
-<script src="js/app.js"></script>
+        <div class="input-group">
+          <label id="feelingLabel">How do you feel?</label>
+          <select id="feelingSelect">
+            <option value="deeply">Deeply in love / ஆழமான காதல்</option>
+            <option value="grateful">Grateful / நன்றியுள்ள</option>
+            <option value="missing">Missing them / நினைவு</option>
+            <option value="excited">Excited about future / எதிர்காலம்</option>
+          </select>
+        </div>
+        <button onclick="generateLetter()" class="generate-btn">
+          📜 Generate Love Letter
+        </button>
+        <div class="letter-output" id="letterOutput"></div>
+
+        <!-- Copy & Share -->
+        <div class="letter-actions">
+          <button onclick="copyLetter()" class="action-btn">📋 Copy</button>
+          <button onclick="shareLetter()" class="action-btn">📤 Share</button>
+          <button onclick="speakLetter()" class="action-btn">🔊 Read Aloud</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Photo Frame Section -->
+    <section id="photoSection" class="section hidden">
+      <div class="card glass-card">
+        <h2 class="section-title">📸 Valentine Photo Frame</h2>
+
+        <div class="frame-selector">
+          <button class="frame-btn active" data-frame="hearts">💕 Hearts</button>
+          <button class="frame-btn" data-frame="roses">🌹 Roses</button>
+          <button class="frame-btn" data-frame="cupid">💘 Cupid</button>
+          <button class="frame-btn" data-frame="elegant">✨ Elegant</button>
+        </div>
+
+        <div class="upload-area" id="uploadArea">
+          <input type="file" id="photoInput" accept="image/*">
+          <div class="upload-content">
+            <span class="upload-icon">📷</span>
+            <p>Click or drag photo here</p>
+          </div>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="canvas"></canvas>
+        </div>
+
+        <div class="photo-actions">
+          <button onclick="downloadPhoto()" class="action-btn primary">
+            💾 Download
+          </button>
+          <button onclick="resetPhoto()" class="action-btn">
+            🔄 Reset
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Video Section -->
+    <section id="videoSection" class="section hidden">
+      <div class="card glass-card">
+        <h2 class="section-title">🎬 Our Love Story</h2>
+
+        <!-- Video Player -->
+        <div class="video-container">
+          <div class="video-placeholder" id="videoPlaceholder" onclick="playVideo()">
+            <div class="play-button">
+              <span>▶</span>
+            </div>
+            <p>Click to play romantic video</p>
+          </div>
+          <video id="loveVideo" class="love-video hidden" controls>
+            <source src="" type="video/mp4">
+          </video>
+        </div>
+
+        <!-- Upload Custom Video -->
+        <div class="video-upload">
+          <label class="upload-label">
+            <input type="file" id="videoInput" accept="video/*" onchange="loadCustomVideo(this)">
+            <span>📹 Upload Our Video</span>
+          </label>
+        </div>
+
+        <!-- Romantic YouTube Videos -->
+        <h3 class="subsection-title">💕 Romantic Vibes</h3>
+        <div class="video-grid">
+          <div class="video-card" onclick="openYouTube('dQw4w9WgXcQ')">
+            <div class="video-thumb">🎵</div>
+            <p>Love Songs Mix</p>
+          </div>
+          <div class="video-card" onclick="openYouTube('450p7goxZqg')">
+            <div class="video-thumb">💑</div>
+            <p>Romantic Moments</p>
+          </div>
+          <div class="video-card" onclick="openYouTube('rtOvBOTyX00')">
+            <div class="video-thumb">🌹</div>
+            <p>Valentine Special</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Memory Slideshow -->
+      <div class="card glass-card">
+        <h2 class="section-title">📸 Memory Slideshow</h2>
+        <div class="slideshow-container">
+          <div class="slideshow-upload">
+            <input type="file" id="slideshowInput" accept="image/*" multiple onchange="loadSlideshow(this)">
+            <div class="upload-prompt">
+              <span>📷</span>
+              <p>Upload photos for slideshow</p>
+            </div>
+          </div>
+          <div class="slideshow" id="slideshow"></div>
+          <div class="slideshow-controls hidden" id="slideshowControls">
+            <button onclick="prevSlide()">⬅️</button>
+            <button onclick="toggleSlideshow()">⏯️</button>
+            <button onclick="nextSlide()">➡️</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Extras Section -->
+    <section id="extrasSection" class="section hidden">
+      <!-- Love Calculator -->
+      <div class="card glass-card">
+        <h2 class="section-title">💕 Love Compatibility</h2>
+        <div class="calc-inputs">
+          <input type="text" id="name1" placeholder="Your name" value="Surendhar">
+          <span class="heart-divider">💗</span>
+          <input type="text" id="name2" placeholder="Partner's name" value="Pavithra">
+        </div>
+        <button onclick="calculateLove()" class="generate-btn">
+          Calculate Love 💘
+        </button>
+        <div class="love-result" id="loveResult"></div>
+      </div>
+
+      <!-- Gift Surprise -->
+      <div class="card glass-card">
+        <h2 class="section-title">🎁 Mystery Gift</h2>
+        <p class="gift-desc">Click to reveal a special surprise!</p>
+        <div class="gift-box" id="giftBox" onclick="showGift()">
+          <div class="gift-lid">🎀</div>
+          <div class="gift-body">🎁</div>
+        </div>
+        <div class="gift-content" id="giftContent"></div>
+      </div>
+
+      <!-- Daily Quote -->
+      <div class="card glass-card">
+        <h2 class="section-title">💭 Daily Love Quote</h2>
+        <div class="quote-container" id="dailyQuote">
+          <p class="quote-text">"Loading today's quote..."</p>
+          <p class="quote-author">- Anonymous</p>
+        </div>
+        <button onclick="newQuote()" class="action-btn">🔄 New Quote</button>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Made with 💖 by Surendhar for Pavithra</p>
+      <p class="footer-love">Forever & Always ∞</p>
+    </footer>
+  </div>
+
+  <script src="js/app.js?v=2.0"></script>
 </body>
+
 </html>

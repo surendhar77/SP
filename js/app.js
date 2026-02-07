@@ -44,7 +44,7 @@ function initMusic() {
   bgMusic = new Audio();
   bgMusic.loop = true;
   bgMusic.volume = 0.3;
-  
+
   // Check for saved custom audio
   const savedAudio = localStorage.getItem('customAudio');
   if (savedAudio) {
@@ -57,9 +57,9 @@ function initMusic() {
 
 function toggleMusic() {
   const musicBtn = document.getElementById('musicBtn');
-  
+
   if (!bgMusic) initMusic();
-  
+
   if (isMusicPlaying) {
     bgMusic.pause();
     musicBtn.classList.remove('playing');
@@ -80,18 +80,18 @@ function toggleMusic() {
 function loadCustomAudio(input) {
   const file = input.files[0];
   if (!file) return;
-  
+
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     const audioData = e.target.result;
-    
+
     // Save to localStorage
     try {
       localStorage.setItem('customAudio', audioData);
     } catch (err) {
       console.log('Audio too large for localStorage');
     }
-    
+
     // Apply to music player
     if (bgMusic) {
       bgMusic.pause();
@@ -100,13 +100,13 @@ function loadCustomAudio(input) {
     bgMusic.loop = true;
     bgMusic.volume = document.getElementById('volumeSlider').value / 100;
     customAudioLoaded = true;
-    
+
     // Auto play
     bgMusic.play().then(() => {
       document.getElementById('musicBtn').classList.add('playing');
       isMusicPlaying = true;
     });
-    
+
     showToast('Custom music loaded! 🎶💕');
     toggleSettings();
   };
@@ -122,15 +122,86 @@ function setVolume(value) {
   localStorage.setItem('musicVolume', value);
 }
 
+function resetMusic() {
+  localStorage.removeItem('customAudio');
+  customAudioLoaded = false;
+
+  if (bgMusic) {
+    bgMusic.pause();
+    bgMusic = null;
+  }
+
+  initMusic();
+
+  if (isMusicPlaying) {
+    bgMusic.play().then(() => {
+      showToast('Music reset to default 🎵');
+    }).catch(console.error);
+  } else {
+    showToast('Music reset to default 🎵');
+  }
+
+  toggleSettings();
+}
+
+// ============ Lyrics Functionality ============
+function toggleLyrics() {
+  const panel = document.getElementById('lyricsPanel');
+  panel.classList.toggle('hidden');
+}
+
+function saveLyrics() {
+  const lyrics = document.getElementById('lyricsInput').value;
+  if (!lyrics.trim()) {
+    showToast('Please enter some lyrics first! 📝');
+    return;
+  }
+  localStorage.setItem('customLyrics', lyrics);
+  displayLyrics(lyrics);
+  showToast('Lyrics saved! 💾');
+}
+
+function loadLyrics() {
+  const savedLyrics = localStorage.getItem('customLyrics');
+  if (savedLyrics) {
+    document.getElementById('lyricsInput').value = savedLyrics;
+    displayLyrics(savedLyrics);
+  }
+}
+
+function displayLyrics(text) {
+  const display = document.getElementById('lyricsDisplay');
+  const input = document.getElementById('lyricsInput');
+
+  // Format text with line breaks
+  display.innerHTML = text.split('\n').map(line => `<p>${line}</p>`).join('');
+
+  display.classList.remove('hidden');
+  input.classList.add('hidden');
+}
+
+function editLyrics() {
+  document.getElementById('lyricsDisplay').classList.add('hidden');
+  document.getElementById('lyricsInput').classList.remove('hidden');
+}
+
+function clearLyrics() {
+  localStorage.removeItem('customLyrics');
+  document.getElementById('lyricsInput').value = '';
+  document.getElementById('lyricsDisplay').innerHTML = '';
+  editLyrics();
+  showToast('Lyrics cleared! 🗑️');
+}
+
 // ============ Background Image ============
 function setBackgroundImage(input) {
   const file = input.files[0];
   if (!file) return;
-  
+
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     const imageData = e.target.result;
-    
+
     // Save to localStorage
     try {
       localStorage.setItem('customBackground', imageData);
@@ -138,7 +209,7 @@ function setBackgroundImage(input) {
       showToast('Image too large! Try a smaller image.');
       return;
     }
-    
+
     applyBackgroundImage(imageData);
     showToast('Background updated! 🖼️💕');
     toggleSettings();
@@ -152,25 +223,25 @@ function applyBackgroundImage(imageData) {
   if (existingBg) {
     existingBg.remove();
   }
-  
+
   // Create new background
   const bgDiv = document.createElement('div');
   bgDiv.className = 'custom-bg';
   bgDiv.style.backgroundImage = `url(${imageData})`;
   document.body.insertBefore(bgDiv, document.body.firstChild);
-  
+
   // Update body style
   document.body.style.background = 'transparent';
 }
 
 function resetBackground() {
   localStorage.removeItem('customBackground');
-  
+
   const existingBg = document.querySelector('.custom-bg');
   if (existingBg) {
     existingBg.remove();
   }
-  
+
   document.body.style.background = 'linear-gradient(135deg, #ff4d6d 0%, #ff758f 50%, #ffb3c1 100%)';
   showToast('Background reset! 🎨');
 }
@@ -181,7 +252,7 @@ function loadSavedBackground() {
   if (savedBg) {
     applyBackgroundImage(savedBg);
   }
-  
+
   // Load saved volume
   const savedVolume = localStorage.getItem('musicVolume');
   if (savedVolume) {
@@ -200,10 +271,10 @@ function toggleSettings() {
 document.addEventListener('click', (e) => {
   const panel = document.getElementById('settingsPanel');
   const settingsBtn = document.getElementById('settingsBtn');
-  
-  if (!panel.classList.contains('hidden') && 
-      !e.target.closest('.settings-content') && 
-      !e.target.closest('.settings-btn')) {
+
+  if (!panel.classList.contains('hidden') &&
+    !e.target.closest('.settings-content') &&
+    !e.target.closest('.settings-btn')) {
     panel.classList.add('hidden');
   }
 });
@@ -240,7 +311,7 @@ class Particle {
     this.rotation = Math.random() * 360;
     this.rotationSpeed = (Math.random() - 0.5) * 10;
   }
-  
+
   update() {
     this.x += this.speedX;
     this.y += this.speedY;
@@ -248,16 +319,16 @@ class Particle {
     this.life -= this.decay;
     this.rotation += this.rotationSpeed;
   }
-  
+
   draw() {
     pCtx.save();
     pCtx.translate(this.x, this.y);
     pCtx.rotate(this.rotation * Math.PI / 180);
     pCtx.globalAlpha = this.life;
     pCtx.fillStyle = this.color;
-    
+
     if (this.type === 'confetti') {
-      pCtx.fillRect(-this.size/2, -this.size/2, this.size, this.size * 2);
+      pCtx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size * 2);
     } else if (this.type === 'firework') {
       pCtx.beginPath();
       pCtx.arc(0, 0, this.size, 0, Math.PI * 2);
@@ -266,21 +337,21 @@ class Particle {
       pCtx.font = `${this.size * 3}px Arial`;
       pCtx.fillText(this.type, -this.size, this.size);
     }
-    
+
     pCtx.restore();
   }
 }
 
 function animateParticles() {
   pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
-  
+
   particles = particles.filter(p => p.life > 0);
-  
+
   particles.forEach(p => {
     p.update();
     p.draw();
   });
-  
+
   if (particles.length > 0) {
     requestAnimationFrame(animateParticles);
   }
@@ -289,7 +360,7 @@ function animateParticles() {
 // ============ Confetti Effect ============
 function triggerConfetti() {
   const colors = ['#ff4d6d', '#ff758f', '#ffb3c1', '#fff', '#ffd700', '#ff69b4'];
-  
+
   for (let i = 0; i < 100; i++) {
     setTimeout(() => {
       const x = Math.random() * window.innerWidth;
@@ -301,7 +372,7 @@ function triggerConfetti() {
       particles.push(particle);
     }, i * 20);
   }
-  
+
   animateParticles();
   showToast('🎊 Confetti time!');
 }
@@ -309,12 +380,12 @@ function triggerConfetti() {
 // ============ Fireworks Effect ============
 function triggerFireworks() {
   const colors = ['#ff4d6d', '#ffd700', '#00ff00', '#00bfff', '#ff69b4', '#fff'];
-  
+
   for (let burst = 0; burst < 5; burst++) {
     setTimeout(() => {
       const centerX = Math.random() * window.innerWidth * 0.8 + window.innerWidth * 0.1;
       const centerY = Math.random() * window.innerHeight * 0.5 + 100;
-      
+
       for (let i = 0; i < 30; i++) {
         const particle = new Particle(centerX, centerY, colors[Math.floor(Math.random() * colors.length)], 'firework');
         const angle = (i / 30) * Math.PI * 2;
@@ -327,7 +398,7 @@ function triggerFireworks() {
       }
     }, burst * 500);
   }
-  
+
   animateParticles();
   showToast('🎆 Fireworks!');
 }
@@ -335,7 +406,7 @@ function triggerFireworks() {
 // ============ Heart Burst Effect ============
 function triggerHeartBurst() {
   const hearts = ['💕', '💖', '💗', '💓', '💝', '❤️', '💘', '💞'];
-  
+
   for (let i = 0; i < 30; i++) {
     setTimeout(() => {
       const x = Math.random() * window.innerWidth;
@@ -348,7 +419,7 @@ function triggerHeartBurst() {
       particles.push(particle);
     }, i * 50);
   }
-  
+
   animateParticles();
   showToast('💕 Hearts everywhere!');
 }
@@ -356,7 +427,7 @@ function triggerHeartBurst() {
 // ============ Rose Petals Effect ============
 function triggerRose() {
   const roses = ['🌹', '🌸', '🌺', '🌷', '💐'];
-  
+
   for (let i = 0; i < 40; i++) {
     setTimeout(() => {
       const x = Math.random() * window.innerWidth;
@@ -369,7 +440,7 @@ function triggerRose() {
       particles.push(particle);
     }, i * 100);
   }
-  
+
   animateParticles();
   showToast('🌹 Rose petals falling!');
 }
@@ -378,7 +449,7 @@ function triggerRose() {
 function createFloatingHearts() {
   const container = document.getElementById('heartsBg');
   const hearts = ['💕', '💖', '💗', '💓', '💝', '❤️', '💘', '🌹'];
-  
+
   for (let i = 0; i < 20; i++) {
     const heart = document.createElement('div');
     heart.className = 'floating-heart';
@@ -401,12 +472,12 @@ function unlock() {
     // Success animation before transition
     const lockContainer = document.querySelector('.lock-container');
     lockContainer.style.animation = 'unlockSuccess 0.6s ease forwards';
-    
+
     setTimeout(() => {
       document.getElementById("lockScreen").style.display = "none";
       document.getElementById("app").classList.remove("hidden");
       initApp();
-      
+
       // Welcome modal
       setTimeout(() => {
         showModal({
@@ -424,7 +495,7 @@ function unlock() {
     input.style.animation = 'shake 0.5s ease';
     setTimeout(() => input.style.animation = '', 500);
     input.value = '';
-    
+
     showModal({
       title: 'Oops, Pavithra!',
       emoji: '🔒',
@@ -464,12 +535,13 @@ function initApp() {
   initTabs();
   loadDailyQuote();
   initMusic();
-  
+  loadLyrics();
+
   // Add shimmer and 3D effects to cards
   document.querySelectorAll('.glass-card').forEach(card => {
     card.classList.add('card-3d');
   });
-  
+
   // Add glow to title
   document.querySelector('.main-title').classList.add('glow-text');
 }
@@ -478,22 +550,22 @@ function initApp() {
 function playVideo() {
   const placeholder = document.getElementById('videoPlaceholder');
   const video = document.getElementById('loveVideo');
-  
+
   showToast('Upload your video or choose from below! 🎬');
 }
 
 function loadCustomVideo(input) {
   const file = input.files[0];
   if (!file) return;
-  
+
   const placeholder = document.getElementById('videoPlaceholder');
   const video = document.getElementById('loveVideo');
-  
+
   video.src = URL.createObjectURL(file);
   placeholder.classList.add('hidden');
   video.classList.remove('hidden');
   video.play();
-  
+
   showToast('Playing your video! 🎬💕');
 }
 
@@ -511,34 +583,34 @@ let isSlideshowPlaying = false;
 function loadSlideshow(input) {
   const files = Array.from(input.files);
   if (files.length === 0) return;
-  
+
   slideshowImages = [];
-  
+
   files.forEach(file => {
     const url = URL.createObjectURL(file);
     slideshowImages.push(url);
   });
-  
+
   // Hide upload, show slideshow
   document.querySelector('.slideshow-upload').style.display = 'none';
   document.getElementById('slideshow').classList.add('active');
   document.getElementById('slideshowControls').classList.remove('hidden');
-  
+
   currentSlide = 0;
   showSlide(currentSlide);
   toggleSlideshow(); // Auto-start
-  
+
   showToast(`Loaded ${files.length} photos! 📸`);
 }
 
 function showSlide(index) {
   const slideshow = document.getElementById('slideshow');
-  
+
   if (slideshowImages.length === 0) return;
-  
+
   if (index >= slideshowImages.length) currentSlide = 0;
   if (index < 0) currentSlide = slideshowImages.length - 1;
-  
+
   slideshow.innerHTML = `<img src="${slideshowImages[currentSlide]}" alt="Memory ${currentSlide + 1}">`;
 }
 
@@ -581,13 +653,13 @@ function initDays() {
   const today = new Date();
   const currentDate = today.getDate();
   const currentMonth = today.getMonth() + 1;
-  
+
   daysDiv.innerHTML = '';
-  
+
   valentineDays.forEach(day => {
     const isToday = currentMonth === 2 && currentDate === day.date;
     const isPast = currentMonth === 2 && currentDate > day.date;
-    
+
     const card = document.createElement("div");
     card.className = `day-card ${isToday ? 'today' : ''}`;
     card.innerHTML = `
@@ -606,7 +678,7 @@ function initDays() {
 function showDayDetails(day) {
   const messages = getDayMessages(day.name);
   const msg = messages[Math.floor(Math.random() * messages.length)];
-  
+
   showModal({
     title: day.name,
     emoji: day.emoji,
@@ -672,18 +744,18 @@ function initCountdown() {
 function updateCountdown() {
   const now = new Date();
   const valentine = new Date(now.getFullYear(), 1, 14, 23, 59, 59);
-  
+
   if (now > valentine) {
     valentine.setFullYear(valentine.getFullYear() + 1);
   }
-  
+
   const diff = valentine - now;
-  
+
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
   const secs = Math.floor((diff % (1000 * 60)) / 1000);
-  
+
   document.getElementById('countDays').textContent = days;
   document.getElementById('countHours').textContent = hours;
   document.getElementById('countMins').textContent = mins;
@@ -697,12 +769,12 @@ function initTabs() {
     tab.addEventListener('click', () => {
       tabs.forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
-      
+
       document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
       document.getElementById(`${tab.dataset.tab}Section`).classList.remove('hidden');
     });
   });
-  
+
   // Message type buttons
   document.querySelectorAll('.type-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -710,7 +782,7 @@ function initTabs() {
       btn.classList.add('active');
     });
   });
-  
+
   // Frame selector
   document.querySelectorAll('.frame-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -733,9 +805,9 @@ function setMsgLanguage(lang) {
       btn.classList.add('active');
     }
   });
-  showToast(lang === 'tamil' ? 'தமிழ் செய்திகள் 🇮🇳' : 
-            lang === 'tanglish' ? 'Tanglish messages! 🔤' : 
-            'English messages 🇬🇧');
+  showToast(lang === 'tamil' ? 'தமிழ் செய்திகள் 🇮🇳' :
+    lang === 'tanglish' ? 'Tanglish messages! 🔤' :
+      'English messages 🇬🇧');
 }
 
 // Tamil Messages Database
@@ -863,10 +935,10 @@ function generateMessage() {
     tamil: 'என் அன்பே',
     tanglish: 'en anbe'
   };
-  
+
   const name = document.getElementById('partnerName').value.trim() || defaultNames[msgLanguage];
   const activeType = document.querySelector('.type-btn.active').dataset.type;
-  
+
   // Select database based on language
   let messages;
   if (msgLanguage === 'tamil') {
@@ -876,18 +948,18 @@ function generateMessage() {
   } else {
     messages = messageDatabase[activeType];
   }
-  
+
   const message = messages[Math.floor(Math.random() * messages.length)];
   const personalizedMessage = message.replace(/{name}/g, name);
-  
+
   const output = document.getElementById('aiMessage');
   output.style.opacity = '0';
-  
+
   setTimeout(() => {
     output.textContent = personalizedMessage;
     output.style.opacity = '1';
     output.style.transition = 'opacity 0.5s ease';
-    
+
     // Trigger heart burst on generate
     triggerHeartBurst();
   }, 200);
@@ -903,7 +975,7 @@ function copyMessage() {
 function shareMessage() {
   const message = document.getElementById('aiMessage').textContent;
   if (navigator.share) {
-    navigator.share({ text: message }).catch(() => {});
+    navigator.share({ text: message }).catch(() => { });
   } else {
     copyMessage();
     showToast('Link copied! Share it with your love 💕');
@@ -1066,7 +1138,7 @@ Surendhar 🌟💍`
 
 function setLanguage(lang) {
   currentLanguage = lang;
-  
+
   // Update button states
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.classList.remove('active');
@@ -1074,7 +1146,7 @@ function setLanguage(lang) {
       btn.classList.add('active');
     }
   });
-  
+
   // Update label text
   const labels = {
     english: 'How do you feel?',
@@ -1082,18 +1154,18 @@ function setLanguage(lang) {
     tanglish: 'Nee eppadi feel panra?'
   };
   document.getElementById('feelingLabel').textContent = labels[lang];
-  
-  showToast(lang === 'tamil' ? 'தமிழ் தேர்ந்தெடுக்கப்பட்டது 🇮🇳' : 
-            lang === 'tanglish' ? 'Tanglish selected! 🔤' : 
-            'English selected 🇬🇧');
+
+  showToast(lang === 'tamil' ? 'தமிழ் தேர்ந்தெடுக்கப்பட்டது 🇮🇳' :
+    lang === 'tanglish' ? 'Tanglish selected! 🔤' :
+      'English selected 🇬🇧');
 }
 
 function generateLetter() {
-  const name = document.getElementById('partnerName').value.trim() || 
-               (currentLanguage === 'tamil' ? 'என் அன்பே' : 
-                currentLanguage === 'tanglish' ? 'En Anbe' : 'My Love');
+  const name = document.getElementById('partnerName').value.trim() ||
+    (currentLanguage === 'tamil' ? 'என் அன்பே' :
+      currentLanguage === 'tanglish' ? 'En Anbe' : 'My Love');
   const feeling = document.getElementById('feelingSelect').value;
-  
+
   // Select template based on language
   let templates;
   if (currentLanguage === 'tamil') {
@@ -1103,22 +1175,22 @@ function generateLetter() {
   } else {
     templates = letterTemplatesEnglish;
   }
-  
+
   let letter = templates[feeling].replace(/{name}/g, name);
-  
+
   const output = document.getElementById('letterOutput');
   output.style.opacity = '0';
-  
+
   setTimeout(() => {
     output.textContent = letter;
     output.style.opacity = '1';
     output.style.transition = 'opacity 0.5s ease';
   }, 200);
-  
+
   // Show toast in selected language
   const toastMsg = currentLanguage === 'tamil' ? 'காதல் கடிதம் உருவாக்கப்பட்டது! 💌' :
-                   currentLanguage === 'tanglish' ? 'Love letter ready! 💌' :
-                   'Love letter generated! 💌';
+    currentLanguage === 'tanglish' ? 'Love letter ready! 💌' :
+      'Love letter generated! 💌';
   showToast(toastMsg);
 }
 
@@ -1142,7 +1214,7 @@ function shareLetter() {
     return;
   }
   if (navigator.share) {
-    navigator.share({ text: letter }).catch(() => {});
+    navigator.share({ text: letter }).catch(() => { });
   } else {
     copyLetter();
   }
@@ -1155,17 +1227,17 @@ function speakLetter() {
     showToast('Generate a letter first! 💌');
     return;
   }
-  
+
   const utterance = new SpeechSynthesisUtterance(letter);
   utterance.rate = 0.85;
-  
+
   // Set language for speech
   if (currentLanguage === 'tamil') {
     utterance.lang = 'ta-IN';
   } else {
     utterance.lang = 'en-US';
   }
-  
+
   speechSynthesis.speak(utterance);
   showToast(currentLanguage === 'tamil' ? 'படிக்கிறேன்... 🔊' : 'Reading aloud... 🔊');
 }
@@ -1178,7 +1250,7 @@ const ctx = canvas.getContext("2d");
 document.getElementById("photoInput").addEventListener("change", e => {
   const file = e.target.files[0];
   if (!file) return;
-  
+
   const img = new Image();
   img.onload = () => {
     currentImage = img;
@@ -1189,19 +1261,19 @@ document.getElementById("photoInput").addEventListener("change", e => {
 
 function applyFrame() {
   if (!currentImage) return;
-  
+
   const frameType = document.querySelector('.frame-btn.active').dataset.frame;
   const img = currentImage;
-  
+
   // Set canvas size
   const maxWidth = 600;
   const scale = Math.min(maxWidth / img.width, 1);
   canvas.width = img.width * scale;
   canvas.height = img.height * scale;
-  
+
   // Draw image
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  
+
   // Apply frame based on type
   switch (frameType) {
     case 'hearts':
@@ -1222,7 +1294,7 @@ function applyFrame() {
 function drawHeartsFrame() {
   const hearts = ['💕', '💖', '💗', '💓', '❤️', '💝'];
   ctx.font = `${Math.min(canvas.width, canvas.height) * 0.08}px Arial`;
-  
+
   // Top
   for (let i = 0; i < canvas.width; i += 50) {
     ctx.fillText(hearts[Math.floor(Math.random() * hearts.length)], i, 35);
@@ -1236,45 +1308,45 @@ function drawHeartsFrame() {
     ctx.fillText(hearts[Math.floor(Math.random() * hearts.length)], 5, i);
     ctx.fillText(hearts[Math.floor(Math.random() * hearts.length)], canvas.width - 40, i);
   }
-  
+
   // Center text
   addCenterText('💕 With Love 💕');
 }
 
 function drawRosesFrame() {
   ctx.font = `${Math.min(canvas.width, canvas.height) * 0.07}px Arial`;
-  
+
   const roses = ['🌹', '🌷', '🌺', '🌸', '💐'];
-  
+
   for (let i = 0; i < canvas.width; i += 45) {
     ctx.fillText(roses[Math.floor(Math.random() * roses.length)], i, 30);
     ctx.fillText(roses[Math.floor(Math.random() * roses.length)], i, canvas.height - 10);
   }
-  
+
   for (let i = 40; i < canvas.height - 40; i += 45) {
     ctx.fillText('🌹', 5, i);
     ctx.fillText('🌹', canvas.width - 35, i);
   }
-  
+
   addCenterText('🌹 Rose Day 🌹');
 }
 
 function drawCupidFrame() {
   ctx.font = `${Math.min(canvas.width, canvas.height) * 0.08}px Arial`;
-  
+
   // Corners
   ctx.fillText('💘', 10, 40);
   ctx.fillText('💘', canvas.width - 45, 40);
   ctx.fillText('💘', 10, canvas.height - 15);
   ctx.fillText('💘', canvas.width - 45, canvas.height - 15);
-  
+
   // Arrows
   const arrows = ['💘', '💝', '🏹', '💕'];
   for (let i = 60; i < canvas.width - 60; i += 60) {
     ctx.fillText(arrows[Math.floor(Math.random() * arrows.length)], i, 35);
     ctx.fillText(arrows[Math.floor(Math.random() * arrows.length)], i, canvas.height - 12);
   }
-  
+
   addCenterText('💘 Cupid\'s Arrow 💘');
 }
 
@@ -1283,18 +1355,18 @@ function drawElegantFrame() {
   ctx.strokeStyle = '#FFD700';
   ctx.lineWidth = 8;
   ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
-  
+
   ctx.strokeStyle = '#FFC0CB';
   ctx.lineWidth = 4;
   ctx.strokeRect(25, 25, canvas.width - 50, canvas.height - 50);
-  
+
   // Corners
   ctx.font = `${Math.min(canvas.width, canvas.height) * 0.06}px Arial`;
   ctx.fillText('✨', 8, 30);
   ctx.fillText('✨', canvas.width - 30, 30);
   ctx.fillText('✨', 8, canvas.height - 12);
   ctx.fillText('✨', canvas.width - 30, canvas.height - 12);
-  
+
   addCenterText('✨ Forever Love ✨');
 }
 
@@ -1304,13 +1376,13 @@ function addCenterText(text) {
   ctx.strokeStyle = '#ff4d6d';
   ctx.lineWidth = 3;
   ctx.textAlign = 'center';
-  
+
   const x = canvas.width / 2;
   const y = canvas.height - 45;
-  
+
   ctx.strokeText(text, x, y);
   ctx.fillText(text, x, y);
-  
+
   ctx.textAlign = 'left';
 }
 
@@ -1337,31 +1409,31 @@ function resetPhoto() {
 function calculateLove() {
   const name1 = document.getElementById('name1').value.trim();
   const name2 = document.getElementById('name2').value.trim();
-  
+
   if (!name1 || !name2) {
     showToast('Please enter both names! 💕');
     return;
   }
-  
+
   // Generate consistent percentage based on names
   const combined = (name1 + name2).toLowerCase();
   let hash = 0;
   for (let i = 0; i < combined.length; i++) {
     hash = combined.charCodeAt(i) + ((hash << 5) - hash);
   }
-  
+
   // Ensure high love percentage (60-100)
   const percentage = 60 + Math.abs(hash % 41);
-  
+
   const messages = [
     { min: 90, text: "Soulmates! 💕 Your love is written in the stars!" },
     { min: 80, text: "Perfect match! 💖 You two are meant to be!" },
     { min: 70, text: "Great compatibility! 💗 Love is definitely in the air!" },
     { min: 60, text: "Strong connection! 💓 Your bond grows stronger each day!" }
   ];
-  
+
   const message = messages.find(m => percentage >= m.min).text;
-  
+
   const resultDiv = document.getElementById('loveResult');
   resultDiv.innerHTML = `
     <span class="love-percentage">${percentage}%</span>
@@ -1370,7 +1442,7 @@ function calculateLove() {
     </div>
     <p class="love-message">${message}</p>
   `;
-  
+
   // Animate the bar
   setTimeout(() => {
     resultDiv.querySelector('.love-bar-fill').style.width = percentage + '%';
@@ -1397,7 +1469,7 @@ let giftOpened = false;
 function showGift() {
   const giftBox = document.getElementById('giftBox');
   const giftContent = document.getElementById('giftContent');
-  
+
   if (giftOpened) {
     // Reset gift
     giftBox.classList.remove('opened');
@@ -1405,11 +1477,11 @@ function showGift() {
     giftOpened = false;
     return;
   }
-  
+
   giftBox.classList.add('opened');
-  
+
   const surprise = giftSurprises[Math.floor(Math.random() * giftSurprises.length)];
-  
+
   setTimeout(() => {
     giftContent.innerHTML = `
       <span class="gift-surprise">${surprise.emoji}</span>
@@ -1439,7 +1511,7 @@ function loadDailyQuote() {
   const today = new Date();
   const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
   const quoteIndex = dayOfYear % loveQuotes.length;
-  
+
   displayQuote(loveQuotes[quoteIndex]);
 }
 
@@ -1451,7 +1523,7 @@ function newQuote() {
 function displayQuote(quote) {
   const container = document.getElementById('dailyQuote');
   container.style.opacity = '0';
-  
+
   setTimeout(() => {
     container.innerHTML = `
       <p class="quote-text">"${quote.text}"</p>
@@ -1467,7 +1539,7 @@ function showToast(message) {
   // Remove existing toast
   const existing = document.querySelector('.toast');
   if (existing) existing.remove();
-  
+
   const toast = document.createElement('div');
   toast.className = 'toast';
   toast.textContent = message;
@@ -1484,9 +1556,9 @@ function showToast(message) {
     z-index: 10000;
     animation: toastIn 0.3s ease;
   `;
-  
+
   document.body.appendChild(toast);
-  
+
   setTimeout(() => {
     toast.style.animation = 'toastOut 0.3s ease forwards';
     setTimeout(() => toast.remove(), 300);
@@ -1526,14 +1598,14 @@ function showModal(options) {
   // Create modal
   const overlay = document.createElement('div');
   overlay.className = 'custom-modal-overlay';
-  
+
   const colors = {
     info: { bg: 'linear-gradient(135deg, #667eea, #764ba2)', btn: '#667eea' },
     success: { bg: 'linear-gradient(135deg, #11998e, #38ef7d)', btn: '#11998e' },
     error: { bg: 'linear-gradient(135deg, #eb3349, #f45c43)', btn: '#eb3349' },
     love: { bg: 'linear-gradient(135deg, #ff4d6d, #ff758f)', btn: '#ff4d6d' }
   };
-  
+
   const color = colors[type] || colors.love;
 
   overlay.innerHTML = `

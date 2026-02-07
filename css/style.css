@@ -27,7 +27,9 @@ body {
   padding-bottom: 30px;
 }
 
-.hidden { display: none !important; }
+.hidden {
+  display: none !important;
+}
 
 /* ============ Animated Hearts Background ============ */
 .hearts-bg {
@@ -53,12 +55,15 @@ body {
     transform: translateY(100vh) rotate(0deg);
     opacity: 0;
   }
+
   10% {
     opacity: 0.6;
   }
+
   90% {
     opacity: 0.6;
   }
+
   100% {
     transform: translateY(-100vh) rotate(720deg);
     opacity: 0;
@@ -97,6 +102,7 @@ body {
     opacity: 0;
     transform: translateY(50px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -113,8 +119,15 @@ body {
 }
 
 @keyframes heartbeat {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.15);
+  }
 }
 
 .lock-container h2 {
@@ -217,7 +230,7 @@ body {
   font-size: 1.3rem;
   font-weight: 600;
   margin-bottom: 5px;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .subtitle-date {
@@ -306,8 +319,15 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Glass Card */
@@ -365,8 +385,15 @@ body {
 }
 
 @keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .day-emoji {
@@ -496,8 +523,15 @@ body {
 }
 
 @keyframes sparkle {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  50% { transform: scale(1.2) rotate(15deg); }
+
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  50% {
+    transform: scale(1.2) rotate(15deg);
+  }
 }
 
 /* Message Output */
@@ -855,8 +889,15 @@ body {
 }
 
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25); }
-  50% { box-shadow: 0 8px 50px rgba(255, 77, 109, 0.5); }
+
+  0%,
+  100% {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  }
+
+  50% {
+    box-shadow: 0 8px 50px rgba(255, 77, 109, 0.5);
+  }
 }
 
 /* Responsive */
@@ -864,42 +905,42 @@ body {
   .main-title {
     font-size: 2.2rem;
   }
-  
+
   .countdown {
     gap: 8px;
   }
-  
+
   .time-box {
     padding: 10px 12px;
     min-width: 55px;
   }
-  
+
   .time-box span {
     font-size: 1.4rem;
   }
-  
+
   .tabs {
     gap: 5px;
     padding: 5px;
   }
-  
+
   .tab {
     padding: 10px 8px;
     font-size: 0.75rem;
   }
-  
+
   .glass-card {
     padding: 20px 15px;
   }
-  
+
   .calc-inputs {
     flex-direction: column;
   }
-  
+
   .calc-inputs input {
     width: 100%;
   }
-  
+
   .install-btn {
     bottom: 15px;
     right: 15px;
@@ -939,28 +980,37 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(255,77,109,0.7), rgba(255,117,143,0.7));
+  background: linear-gradient(135deg, rgba(255, 77, 109, 0.7), rgba(255, 117, 143, 0.7));
 }
 
 /* ============ Settings Button ============ */
 .settings-btn {
   position: fixed;
-  top: 20px;
+  top: calc(20px + env(safe-area-inset-top));
   left: 20px;
-  width: 50px;
-  height: 50px;
+  width: 55px;
+  height: 55px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--white), #ffe6ea);
+  background: linear-gradient(135deg, #ffffff, #ffe6ea);
   border: none;
-  font-size: 1.5rem;
   cursor: pointer;
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
-  z-index: 1500;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff4d6d;
+}
+
+.settings-btn svg {
+  width: 28px;
+  height: 28px;
 }
 
 .settings-btn:hover {
   transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 8px 35px rgba(255, 77, 109, 0.4);
 }
 
 /* ============ Settings Panel ============ */
@@ -1104,9 +1154,9 @@ body {
 /* ============ Music Player ============ */
 .music-player {
   position: fixed;
-  top: 20px;
+  top: calc(20px + env(safe-area-inset-top));
   right: 20px;
-  z-index: 1500;
+  z-index: 9999;
 }
 
 .music-btn {
@@ -1134,8 +1184,15 @@ body {
 }
 
 @keyframes musicPulse {
-  0%, 100% { box-shadow: 0 5px 25px rgba(255, 77, 109, 0.3); }
-  50% { box-shadow: 0 5px 40px rgba(255, 77, 109, 0.6); }
+
+  0%,
+  100% {
+    box-shadow: 0 5px 25px rgba(255, 77, 109, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 5px 40px rgba(255, 77, 109, 0.6);
+  }
 }
 
 .music-icon {
@@ -1165,13 +1222,31 @@ body {
   animation: musicWave 0.8s ease-in-out infinite;
 }
 
-.music-wave span:nth-child(1) { height: 8px; animation-delay: 0s; }
-.music-wave span:nth-child(2) { height: 15px; animation-delay: 0.2s; }
-.music-wave span:nth-child(3) { height: 10px; animation-delay: 0.4s; }
+.music-wave span:nth-child(1) {
+  height: 8px;
+  animation-delay: 0s;
+}
+
+.music-wave span:nth-child(2) {
+  height: 15px;
+  animation-delay: 0.2s;
+}
+
+.music-wave span:nth-child(3) {
+  height: 10px;
+  animation-delay: 0.4s;
+}
 
 @keyframes musicWave {
-  0%, 100% { transform: scaleY(0.5); }
-  50% { transform: scaleY(1); }
+
+  0%,
+  100% {
+    transform: scaleY(0.5);
+  }
+
+  50% {
+    transform: scaleY(1);
+  }
 }
 
 /* ============ Effects Bar ============ */
@@ -1367,8 +1442,15 @@ body {
 }
 
 @keyframes slideFade {
-  from { opacity: 0; transform: scale(1.05); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .slideshow-controls {
@@ -1407,6 +1489,7 @@ body {
     transform: translateY(-10px) rotate(0deg);
     opacity: 1;
   }
+
   100% {
     transform: translateY(100vh) rotate(720deg);
     opacity: 0;
@@ -1426,10 +1509,12 @@ body {
     transform: scale(0);
     opacity: 1;
   }
+
   50% {
     transform: scale(1);
     opacity: 1;
   }
+
   100% {
     transform: scale(1.5);
     opacity: 0;
@@ -1450,10 +1535,12 @@ body {
     transform: scale(0) translateY(0);
     opacity: 1;
   }
+
   50% {
     transform: scale(1.5) translateY(-50px);
     opacity: 1;
   }
+
   100% {
     transform: scale(1) translateY(-150px);
     opacity: 0;
@@ -1474,6 +1561,7 @@ body {
     transform: translateY(-20px) rotate(0deg) translateX(0);
     opacity: 1;
   }
+
   100% {
     transform: translateY(100vh) rotate(360deg) translateX(100px);
     opacity: 0;
@@ -1486,9 +1574,12 @@ body {
 }
 
 @keyframes glowPulse {
-  0%, 100% {
+
+  0%,
+  100% {
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
   }
+
   50% {
     text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(255, 77, 109, 0.5);
   }
@@ -1517,59 +1608,201 @@ body {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent);
   animation: shimmer 2s infinite;
 }
 
 @keyframes shimmer {
-  0% { left: -100%; }
-  100% { left: 100%; }
+  0% {
+    left: -100%;
+  }
+
+  100% {
+    left: 100%;
+  }
 }
 
 /* ============ Responsive for new elements ============ */
 @media (max-width: 600px) {
   .music-player {
-    top: 10px;
+    top: calc(10px + env(safe-area-inset-top));
     right: 10px;
   }
-  
+
   .music-btn {
     width: 45px;
     height: 45px;
   }
-  
+
   .settings-btn {
-    top: 10px;
+    top: calc(10px + env(safe-area-inset-top));
     left: 10px;
-    width: 40px;
-    height: 40px;
-    font-size: 1.2rem;
+    width: 45px;
+    height: 45px;
   }
-  
+
+  .settings-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+
   .settings-content {
     padding: 20px;
     max-height: 90vh;
   }
-  
+
   .effects-bar {
     gap: 8px;
   }
-  
+
   .effect-btn {
     padding: 8px 15px;
     font-size: 0.8rem;
   }
-  
+
   .video-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .slideshow img {
     height: 250px;
   }
+}
+
+/* ============ Lyrics Panel ============ */
+.lyrics-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 500px;
+  height: 80vh;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 25px;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40%) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.lyrics-header {
+  padding: 20px;
+  background: var(--primary);
+  color: var(--white);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lyrics-header h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.close-lyrics {
+  background: transparent;
+  border: none;
+  color: var(--white);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.lyrics-body {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+#lyricsInput {
+  width: 100%;
+  height: 100%;
+  border: 2px solid #eee;
+  border-radius: 15px;
+  padding: 15px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  resize: none;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+#lyricsInput:focus {
+  border-color: var(--primary);
+}
+
+#lyricsDisplay {
+  width: 100%;
+  height: 100%;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  color: #333;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+#lyricsDisplay p {
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+}
+
+.lyrics-footer {
+  padding: 15px 20px;
+  background: #f9f9f9;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.lyrics-footer .action-btn {
+  background: var(--white);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  padding: 10px;
+  border-radius: 10px;
+  flex: 1;
+  font-weight: 600;
+}
+
+.lyrics-footer .action-btn:hover {
+  background: var(--primary);
+  color: var(--white);
+}
+
+/* Reset Button */
+.reset-btn {
+  width: 100%;
+  padding: 10px;
+  background: #ff4d6d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+.reset-btn:hover {
+  background: #e63950;
 }
