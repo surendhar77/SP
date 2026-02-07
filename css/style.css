@@ -545,6 +545,38 @@ body {
   color: var(--primary);
 }
 
+/* Language Selector */
+.language-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.lang-btn {
+  flex: 1;
+  min-width: 90px;
+  padding: 12px 15px;
+  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--white);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.lang-btn.active {
+  background: var(--white);
+  color: var(--primary);
+}
+
+.lang-btn:hover:not(.active) {
+  border-color: var(--white);
+  background: rgba(255, 255, 255, 0.25);
+}
+
 /* Letter Output */
 .letter-output {
   background: rgba(255, 255, 255, 0.1);
@@ -554,6 +586,12 @@ body {
   font-style: italic;
   line-height: 1.8;
   white-space: pre-wrap;
+}
+
+.letter-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
 }
 
 /* Photo Section */
@@ -881,12 +919,194 @@ body {
   z-index: 9999;
 }
 
+/* ============ Custom Background ============ */
+.custom-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  z-index: -1;
+}
+
+.custom-bg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255,77,109,0.7), rgba(255,117,143,0.7));
+}
+
+/* ============ Settings Button ============ */
+.settings-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--white), #ffe6ea);
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+  z-index: 1500;
+  transition: all 0.3s ease;
+}
+
+.settings-btn:hover {
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* ============ Settings Panel ============ */
+.settings-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.settings-content {
+  background: linear-gradient(135deg, #ff4d6d, #ff758f);
+  border-radius: 25px;
+  padding: 30px;
+  max-width: 400px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.settings-content h3 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 25px;
+  color: var(--white);
+}
+
+.setting-item {
+  margin-bottom: 25px;
+}
+
+.setting-item label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--white);
+}
+
+.upload-box {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px dashed var(--glass-border);
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--white);
+}
+
+.upload-box:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: var(--white);
+}
+
+.upload-box span {
+  font-size: 1rem;
+}
+
+.setting-hint {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.reset-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.reset-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Volume Slider */
+#volumeSlider {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  outline: none;
+  -webkit-appearance: none;
+  margin: 10px 0;
+}
+
+#volumeSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--white);
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+#volumeValue {
+  display: block;
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.close-settings {
+  width: 100%;
+  padding: 15px;
+  background: var(--white);
+  color: var(--primary);
+  border: none;
+  border-radius: 15px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.close-settings:hover {
+  transform: scale(1.02);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
 /* ============ Music Player ============ */
 .music-player {
   position: fixed;
   top: 20px;
   right: 20px;
-  z-index: 1001;
+  z-index: 1500;
 }
 
 .music-btn {
@@ -1321,6 +1541,19 @@ body {
   .music-btn {
     width: 45px;
     height: 45px;
+  }
+  
+  .settings-btn {
+    top: 10px;
+    left: 10px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+  
+  .settings-content {
+    padding: 20px;
+    max-height: 90vh;
   }
   
   .effects-bar {

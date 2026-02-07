@@ -32,6 +32,7 @@ window.addEventListener('appinstalled', () => {
 // ============ Background Music ============
 let bgMusic = null;
 let isMusicPlaying = false;
+let customAudioLoaded = false;
 
 // Romantic music URLs (royalty-free)
 const musicTracks = [
@@ -43,7 +44,15 @@ function initMusic() {
   bgMusic = new Audio();
   bgMusic.loop = true;
   bgMusic.volume = 0.3;
-  bgMusic.src = musicTracks[0];
+  
+  // Check for saved custom audio
+  const savedAudio = localStorage.getItem('customAudio');
+  if (savedAudio) {
+    bgMusic.src = savedAudio;
+    customAudioLoaded = true;
+  } else {
+    bgMusic.src = musicTracks[0];
+  }
 }
 
 function toggleMusic() {
@@ -60,12 +69,149 @@ function toggleMusic() {
     bgMusic.play().then(() => {
       musicBtn.classList.add('playing');
       isMusicPlaying = true;
-      showToast('Playing romantic music 🎵');
+      showToast(customAudioLoaded ? 'Playing your music 🎵💕' : 'Playing romantic music 🎵');
     }).catch(err => {
       showToast('Click again to play music 🎵');
     });
   }
 }
+
+// Load custom audio file
+function loadCustomAudio(input) {
+  const file = input.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const audioData = e.target.result;
+    
+    // Save to localStorage
+    try {
+      localStorage.setItem('customAudio', audioData);
+    } catch (err) {
+      console.log('Audio too large for localStorage');
+    }
+    
+    // Apply to music player
+    if (bgMusic) {
+      bgMusic.pause();
+    }
+    bgMusic = new Audio(audioData);
+    bgMusic.loop = true;
+    bgMusic.volume = document.getElementById('volumeSlider').value / 100;
+    customAudioLoaded = true;
+    
+    // Auto play
+    bgMusic.play().then(() => {
+      document.getElementById('musicBtn').classList.add('playing');
+      isMusicPlaying = true;
+    });
+    
+    showToast('Custom music loaded! 🎶💕');
+    toggleSettings();
+  };
+  reader.readAsDataURL(file);
+}
+
+// Set volume
+function setVolume(value) {
+  document.getElementById('volumeValue').textContent = value + '%';
+  if (bgMusic) {
+    bgMusic.volume = value / 100;
+  }
+  localStorage.setItem('musicVolume', value);
+}
+
+// ============ Background Image ============
+function setBackgroundImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const imageData = e.target.result;
+    
+    // Save to localStorage
+    try {
+      localStorage.setItem('customBackground', imageData);
+    } catch (err) {
+      showToast('Image too large! Try a smaller image.');
+      return;
+    }
+    
+    applyBackgroundImage(imageData);
+    showToast('Background updated! 🖼️💕');
+    toggleSettings();
+  };
+  reader.readAsDataURL(file);
+}
+
+function applyBackgroundImage(imageData) {
+  // Remove existing custom background
+  const existingBg = document.querySelector('.custom-bg');
+  if (existingBg) {
+    existingBg.remove();
+  }
+  
+  // Create new background
+  const bgDiv = document.createElement('div');
+  bgDiv.className = 'custom-bg';
+  bgDiv.style.backgroundImage = `url(${imageData})`;
+  document.body.insertBefore(bgDiv, document.body.firstChild);
+  
+  // Update body style
+  document.body.style.background = 'transparent';
+}
+
+function resetBackground() {
+  localStorage.removeItem('customBackground');
+  
+  const existingBg = document.querySelector('.custom-bg');
+  if (existingBg) {
+    existingBg.remove();
+  }
+  
+  document.body.style.background = 'linear-gradient(135deg, #ff4d6d 0%, #ff758f 50%, #ffb3c1 100%)';
+  showToast('Background reset! 🎨');
+}
+
+// Load saved background on startup
+function loadSavedBackground() {
+  const savedBg = localStorage.getItem('customBackground');
+  if (savedBg) {
+    applyBackgroundImage(savedBg);
+  }
+  
+  // Load saved volume
+  const savedVolume = localStorage.getItem('musicVolume');
+  if (savedVolume) {
+    document.getElementById('volumeSlider').value = savedVolume;
+    document.getElementById('volumeValue').textContent = savedVolume + '%';
+  }
+}
+
+// ============ Settings Panel ============
+function toggleSettings() {
+  const panel = document.getElementById('settingsPanel');
+  panel.classList.toggle('hidden');
+}
+
+// Close settings when clicking outside
+document.addEventListener('click', (e) => {
+  const panel = document.getElementById('settingsPanel');
+  const settingsBtn = document.getElementById('settingsBtn');
+  
+  if (!panel.classList.contains('hidden') && 
+      !e.target.closest('.settings-content') && 
+      !e.target.closest('.settings-btn')) {
+    panel.classList.add('hidden');
+  }
+});
+
+// Load saved settings on page load
+window.addEventListener('DOMContentLoaded', () => {
+  loadSavedBackground();
+});
 
 // ============ Particle Effects System ============
 const particleCanvas = document.getElementById('particleCanvas');
@@ -577,6 +723,89 @@ function initTabs() {
 
 // ============ AI Message Generator ============
 // Personalized for Surendhar & Pavithra
+let msgLanguage = 'english';
+
+function setMsgLanguage(lang) {
+  msgLanguage = lang;
+  document.querySelectorAll('[data-msglang]').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.dataset.msglang === lang) {
+      btn.classList.add('active');
+    }
+  });
+  showToast(lang === 'tamil' ? 'தமிழ் செய்திகள் 🇮🇳' : 
+            lang === 'tanglish' ? 'Tanglish messages! 🔤' : 
+            'English messages 🇬🇧');
+}
+
+// Tamil Messages Database
+const messageDatabaseTamil = {
+  romantic: [
+    "என் இதயம் உனக்காக மட்டுமே துடிக்கிறது, {name}. உன்னுடன் இருக்கும் ஒவ்வொரு தருணமும் என் ஆத்மாவின் புதையல். 💕",
+    "என் இதயத்தின் தோட்டத்தில், {name}, நீதான் மலர்ந்த மிக அழகான மலர். 🌹",
+    "{name}, வார்த்தைகள் தோல்வியடையும் போது என் இதயம் எழுதும் கவிதை நீ. உன்னை அளவிட முடியாத அளவு காதலிக்கிறேன். ❤️",
+    "ஒவ்வொரு சூரிய உதயமும் உன் புன்னகையை நினைவூட்டுகிறது, {name}. 🌅",
+    "{name}, என் காதல் கடல் போல் - விரிந்த, ஆழமான, முடிவில்லாத. நீ என் எல்லாம். 💗",
+    "{name}, நீ என் வாழ்க்கையின் காதல் மட்டுமல்ல, என் காதலின் வாழ்க்கையும் நீயே. 💝",
+    "சுரேந்தர் + {name} = என்றென்றும்! என் இதயம் உன்னுடையது, இப்போதும் எப்போதும். ∞💕"
+  ],
+  funny: [
+    "பீட்சாவை விட உன்னை அதிகமாக நேசிக்கிறேன், {name}. நான் பீட்சாவை எவ்வளவு நேசிக்கிறேன் என்று உனக்கு தெரியும்! 🍕❤️",
+    "{name}, நீ என் மக்ரோனிக்கு சீஸ் மாதிரி - உன்னில்லாம life romba bore! 🧀",
+    "{name}, நீ ஒரு காய்கறி என்றால், நீ ஒரு cute-cumber ஆக இருப்பாய்! உன்னை நேசிக்கிறேன்! 🥒💕",
+    "நான் போட்டோகிராஃபர் இல்ல, ஆனா {name}, நம்மளை ஒன்னா forever picture பண்ண முடியும்! 📸",
+    "{name}, நீ மேஜிஷியன் மாதிரி - உன்னை பார்க்கும்போது மத்தவங்க எல்லாரும் மறைஞ்சுடுறாங்க! ✨"
+  ],
+  poetic: [
+    "வாழ்க்கையின் நெசவில், {name}, எல்லாவற்றையும் அழகாக்கும் தங்க நூல் நீ. ✨",
+    "தொலைந்த மாலுமிகளை வீட்டிற்கு வழிநடத்தும் நட்சத்திரங்கள் போல், {name}, உன் காதல் என் இதயத்தை அமைதிக்கு வழிநடத்துகிறது. ⭐",
+    "இரண்டு ஆன்மாக்கள் பின்னிப்பிணைந்து, {name}, நித்தியத்தில் நடனமாடுகின்றன - அது நாம், என்றென்றும். 💫",
+    "சந்திரன் உன் பெயரை கிசுகிசுக்கிறது, {name}, நட்சத்திரங்கள் உனக்கான என் காதலை எழுதுகின்றன. 🌙"
+  ],
+  sweet: [
+    "நீ என் இதயத்தை சிரிக்க வைக்கிறாய், {name}. உன்னுடன் ஒவ்வொரு நாளும் ஒரு ஆசீர்வாதம். 😊💖",
+    "{name}, நீ தேனை விட இனிமையானவள், தங்கத்தை விட விலைமதிப்பற்றவள். உன்னை மிகவும் நேசிக்கிறேன்! 🍯",
+    "உன்னை நினைக்கும்போது, {name}, என் இதயம் மகிழ்ச்சியாக நடனமாடுகிறது! 💃❤️",
+    "நீ என் favourite notification, {name}. உன் பெயரை பார்க்கும்போதெல்லாம் சிரிப்பு வருது! 📱💕",
+    "வாழ்க்கை அழகானது, ஏனென்றால் அது என்னை உன்னிடம் கொண்டு வந்தது, {name}. என்னுடையவளாக இருப்பதற்கு நன்றி. 🌈💝"
+  ]
+};
+
+// Tanglish Messages Database
+const messageDatabaseTanglish = {
+  romantic: [
+    "En heart unnakaga mattum thudikkuthu, {name}. Unnoda irukura every moment en soul-oda treasure. 💕",
+    "En heart-oda garden-la, {name}, nee bloom aana most beautiful flower. 🌹",
+    "{name}, words fail aagum bodhu en heart ezhuthura poetry nee. Unnai measure panna mudiyaadha alavu love panren. ❤️",
+    "Every sunrise un smile-a remind panudhu, {name}, every sunset un warmth-a remind panudhu. 🌅",
+    "En love unnakku, {name}, ocean maathiri - vast, deep, endless. Nee en everything. 💗",
+    "{name}, nee en life-oda love mattum illa, en love-oda life-um nee dhaan. 💝",
+    "Surendhar + {name} = Forever! En heart un-oda, ippo-vum eppo-vum. ∞💕"
+  ],
+  funny: [
+    "Pizza-va vida unnai adhigama love panren, {name}. Naan pizza-va evlo love panren nu unakku theriyum! 🍕❤️",
+    "{name}, nee en macaroni-kku cheese maathiri - un illama life romba plain! 🧀",
+    "{name}, nee vegetable-na, nee cute-cumber-a iruppa! Love you! 🥒💕",
+    "Naan photographer illa, aana {name}, namma together forever picture panna mudiyum! 📸",
+    "{name}, nee magician maathiri - unnai paakkum bodhu mattavanga ellam disappear aaiduvaanga! ✨",
+    "{name}, unnai coffee-va vida love panren, adhu solla romba! ☕💕"
+  ],
+  poetic: [
+    "Life-oda tapestry-la, {name}, ellathayum beautiful aakkura golden thread nee. ✨",
+    "Lost sailors-a home-ku guide pannura stars maathiri, {name}, un love en heart-a peace-ku guide pannudhu. ⭐",
+    "Rendu souls intertwined, {name}, eternity-la dance pannudhu - adhu namma, forever and always. 💫",
+    "Moon un name-a whisper pannudhu, {name}, stars en love-a spell out pannudhu. 🌙",
+    "Time un kooda irukum bodhu still aagiduthu, {name}, un eyes-la naan infinity-a kandaen. ∞"
+  ],
+  sweet: [
+    "Nee en heart-a smile panna vaikira, {name}. Un kooda every day oru blessing. 😊💖",
+    "{name}, nee honey-va vida sweet, gold-a vida precious. Unnai adore panren! 🍯",
+    "Unnai think pannum bodhu, {name}, en heart happy dance aadudhu! 💃❤️",
+    "Nee en favorite notification, {name}. Un name paakkum bodhu ellam smile varudhu! 📱💕",
+    "Life beautiful, because adhu ennai un-kitte kondu vandhuchu, {name}. Thank you for being mine. 🌈💝"
+  ]
+};
+
 const messageDatabase = {
   romantic: [
     "My heart beats only for you, {name}. Every moment with you is a treasure I hold close to my soul. 💕",
@@ -629,9 +858,24 @@ const messageDatabase = {
 };
 
 function generateMessage() {
-  const name = document.getElementById('partnerName').value.trim() || 'my love';
+  const defaultNames = {
+    english: 'my love',
+    tamil: 'என் அன்பே',
+    tanglish: 'en anbe'
+  };
+  
+  const name = document.getElementById('partnerName').value.trim() || defaultNames[msgLanguage];
   const activeType = document.querySelector('.type-btn.active').dataset.type;
-  const messages = messageDatabase[activeType];
+  
+  // Select database based on language
+  let messages;
+  if (msgLanguage === 'tamil') {
+    messages = messageDatabaseTamil[activeType];
+  } else if (msgLanguage === 'tanglish') {
+    messages = messageDatabaseTanglish[activeType];
+  } else {
+    messages = messageDatabase[activeType];
+  }
   
   const message = messages[Math.floor(Math.random() * messages.length)];
   const personalizedMessage = message.replace(/{name}/g, name);
@@ -643,6 +887,9 @@ function generateMessage() {
     output.textContent = personalizedMessage;
     output.style.opacity = '1';
     output.style.transition = 'opacity 0.5s ease';
+    
+    // Trigger heart burst on generate
+    triggerHeartBurst();
   }, 200);
 }
 
@@ -674,7 +921,10 @@ function speakMessage() {
 
 // ============ Love Letter Generator ============
 // Personalized letters from Surendhar to Pavithra
-const letterTemplates = {
+let currentLanguage = 'english';
+
+// English Letters
+const letterTemplatesEnglish = {
   deeply: `My Dearest {name},
 
 Every moment I spend with you feels like a beautiful dream I never want to wake up from. You've touched my heart in ways I never thought possible.
@@ -720,11 +970,141 @@ Here's to our beautiful future,
 Surendhar 🌟💍`
 };
 
+// Tamil Letters
+const letterTemplatesTamil = {
+  deeply: `என் அன்பான {name},
+
+உன்னோடு செலவிடும் ஒவ்வொரு நொடியும் ஒரு அழகான கனவு போல் உணர்கிறேன். நீ என் இதயத்தை தொட்டிருக்கிறாய், அது நான் நினைத்ததை விட அழகானது.
+
+உன்னுடன் இருக்கும்போது, உலகம் பிரகாசமாகிறது, வண்ணங்கள் மேலும் தெளிவாகின்றன, ஒவ்வொரு சாதாரண தருணமும் மாயமாக மாறுகிறது. நீ என் மிகப்பெரிய சாகசம், என் ஆழமான காதல், என் நிரந்தர வீடு.
+
+வார்த்தைகளால் சொல்ல முடியாத அளவு உன்னை காதலிக்கிறேன். நீ என் எல்லாமே, {name}.
+
+என்றென்றும் உன்னவன்,
+சுரேந்தர் 💕`,
+
+  grateful: `என் அன்பான {name},
+
+இன்று, என் வாழ்க்கையில் நீ இருப்பதற்கு நான் எவ்வளவு நன்றியுள்ளவனாக இருக்கிறேன் என்பதை உனக்கு தெரிவிக்க விரும்புகிறேன். நீ என் பலம், என் ஆறுதல், என் மிகப்பெரிய ஆதரவாளர்.
+
+என் குறைபாடுகளை மன்னித்து என்னை நேசித்ததற்கு, என் வெற்றிகளை கொண்டாடியதற்கு, ஒவ்வொரு புயலிலும் என் கையை பிடித்ததற்கு நன்றி. ஒவ்வொரு நாளும் நீ என்னை சிறந்த மனிதனாக மாற்றுகிறாய்.
+
+{name}, உன்னை பெற்றது என் அதிர்ஷ்டம்.
+
+அன்புடன்,
+உன் சுரேந்தர் 🙏💖`,
+
+  missing: `என் இனிய {name},
+
+நம் இடையேயான தூரம் கடல் போல் உணர்கிறது, ஆனால் என் காதல் ஒவ்வொரு அலையையும் கடக்கிறது. உன் புன்னகை, உன் குரல், என் அருகில் உன் சூடு எல்லாம் மிகவும் நினைவுக்கு வருகிறது.
+
+உன்னை இல்லாமல் ஒவ்வொரு விநாடியும் நீ எனக்கு எவ்வளவு முக்கியம் என்பதை நினைவூட்டுகிறது. நீ எப்போதும் என் எண்ணங்களில் இருக்கிறாய், உன்னை மீண்டும் பார்க்க என் இதயம் ஏங்குகிறது.
+
+உன்னை சந்திக்க காத்திருக்கிறேன், {name}!
+
+மீண்டும் சந்திக்கும் வரை,
+சுரேந்தர் 💔➡️💕`,
+
+  excited: `என் அன்பான {name},
+
+நம் எதிர்காலத்தை பற்றி நினைப்பதை என்னால் நிறுத்த முடியவில்லை! என் ஒவ்வொரு கனவிலும் நீ இருக்கிறாய், நமக்காக காத்திருக்கும் எல்லா சாகசங்களுக்கும் நான் மிகவும் உற்சாகமாக இருக்கிறேன்.
+
+காதல், சிரிப்பு, முடிவற்ற நினைவுகள் நிறைந்த வாழ்க்கையை நாம் கட்டமைப்போம் என்று கற்பனை செய்கிறேன். நீ என் பக்கத்தில் இருந்தால், ஒவ்வொரு நாளையும் இன்றை விட சிறப்பாக இருக்கும் என்று எனக்கு தெரியும்.
+
+{name}, நீ என் நிரந்தரம்!
+
+நம் அழகான எதிர்காலத்திற்கு,
+சுரேந்தர் 🌟💍`
+};
+
+// Tanglish Letters (Tamil in English script)
+const letterTemplatesTanglish = {
+  deeply: `En Anbe {name},
+
+Unnoda selavu seyra ovvoru nimishamum oru azhagana kanavu maathiri feel aaguthu. Nee en heart-a touch panni irukkura vidhathula naan nenacha adhigam love panren.
+
+Unnoda irukkumbodhu, ulagame bright aagiduthu, colors romba vivid aagiduthu, ovvoru normal moment-um magical aagiduthu. Nee en biggest adventure, en deepest love, en forever home.
+
+Words-la solla mudiyaadha alavu unnai love panren. Nee en ellame, {name}.
+
+Forever un,
+Surendhar 💕`,
+
+  grateful: `En Anbe {name},
+
+Innaiku, en life-la nee irukuradhukkaga naan evlo grateful-a irukken nu unakkku sollanumnu irukku. Nee en strength, en comfort, en biggest supporter.
+
+En mistakes-a forgive panni ennai love pannadhukku, en success-a celebrate pannadhukku, every problem-la en kaiya pudichaadhukku thanks. Every day nee ennai better person aakura.
+
+{name}, unnai paetra naan romba lucky.
+
+With all my love,
+Un Surendhar 🙏💖`,
+
+  missing: `En Iniya {name},
+
+Namma distance ocean maathiri feel aaguthu, aana en love every wave-um cross panudhuu. Un smile, un voice, en pakathula un warmth ellam romba miss panren.
+
+Un illama irukura every second nee enakkku evlo important nu remind panudhu. Nee eppovum en thoughts-la irukka, unnai paakanum nu en heart ache aagudhu.
+
+Unnai paakka wait panren, {name}!
+
+Namma meet aagiradhu varaikum,
+Surendhar 💔➡️💕`,
+
+  excited: `En Anbe {name},
+
+Namma future-a pathi think panna ennala stop pannave mudila! En every dream-la nee irukka, nammaku wait pannura every adventure-ukku naan romba excited-a irukken.
+
+Love, siripu, endless memories full-a oru life namma build panuvom nu imagine panren. Nee en side-la irundhaa, every tomorrow today-a vida better-a irukkum nu enakku theriyum.
+
+{name}, nee en forever!
+
+Namma beautiful future-kku,
+Surendhar 🌟💍`
+};
+
+function setLanguage(lang) {
+  currentLanguage = lang;
+  
+  // Update button states
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.dataset.lang === lang) {
+      btn.classList.add('active');
+    }
+  });
+  
+  // Update label text
+  const labels = {
+    english: 'How do you feel?',
+    tamil: 'நீங்கள் எப்படி உணர்கிறீர்கள்?',
+    tanglish: 'Nee eppadi feel panra?'
+  };
+  document.getElementById('feelingLabel').textContent = labels[lang];
+  
+  showToast(lang === 'tamil' ? 'தமிழ் தேர்ந்தெடுக்கப்பட்டது 🇮🇳' : 
+            lang === 'tanglish' ? 'Tanglish selected! 🔤' : 
+            'English selected 🇬🇧');
+}
+
 function generateLetter() {
-  const name = document.getElementById('partnerName').value.trim() || 'My Love';
+  const name = document.getElementById('partnerName').value.trim() || 
+               (currentLanguage === 'tamil' ? 'என் அன்பே' : 
+                currentLanguage === 'tanglish' ? 'En Anbe' : 'My Love');
   const feeling = document.getElementById('feelingSelect').value;
   
-  let letter = letterTemplates[feeling].replace(/{name}/g, name);
+  // Select template based on language
+  let templates;
+  if (currentLanguage === 'tamil') {
+    templates = letterTemplatesTamil;
+  } else if (currentLanguage === 'tanglish') {
+    templates = letterTemplatesTanglish;
+  } else {
+    templates = letterTemplatesEnglish;
+  }
+  
+  let letter = templates[feeling].replace(/{name}/g, name);
   
   const output = document.getElementById('letterOutput');
   output.style.opacity = '0';
@@ -734,6 +1114,60 @@ function generateLetter() {
     output.style.opacity = '1';
     output.style.transition = 'opacity 0.5s ease';
   }, 200);
+  
+  // Show toast in selected language
+  const toastMsg = currentLanguage === 'tamil' ? 'காதல் கடிதம் உருவாக்கப்பட்டது! 💌' :
+                   currentLanguage === 'tanglish' ? 'Love letter ready! 💌' :
+                   'Love letter generated! 💌';
+  showToast(toastMsg);
+}
+
+// Copy letter
+function copyLetter() {
+  const letter = document.getElementById('letterOutput').textContent;
+  if (!letter) {
+    showToast('Generate a letter first! 💌');
+    return;
+  }
+  navigator.clipboard.writeText(letter).then(() => {
+    showToast(currentLanguage === 'tamil' ? 'நகலெடுக்கப்பட்டது! 📋' : 'Copied! 📋');
+  });
+}
+
+// Share letter
+function shareLetter() {
+  const letter = document.getElementById('letterOutput').textContent;
+  if (!letter) {
+    showToast('Generate a letter first! 💌');
+    return;
+  }
+  if (navigator.share) {
+    navigator.share({ text: letter }).catch(() => {});
+  } else {
+    copyLetter();
+  }
+}
+
+// Read letter aloud
+function speakLetter() {
+  const letter = document.getElementById('letterOutput').textContent;
+  if (!letter) {
+    showToast('Generate a letter first! 💌');
+    return;
+  }
+  
+  const utterance = new SpeechSynthesisUtterance(letter);
+  utterance.rate = 0.85;
+  
+  // Set language for speech
+  if (currentLanguage === 'tamil') {
+    utterance.lang = 'ta-IN';
+  } else {
+    utterance.lang = 'en-US';
+  }
+  
+  speechSynthesis.speak(utterance);
+  showToast(currentLanguage === 'tamil' ? 'படிக்கிறேன்... 🔊' : 'Reading aloud... 🔊');
 }
 
 // ============ Photo Frame ============

@@ -28,6 +28,46 @@
       <span></span><span></span><span></span>
     </span>
   </button>
+  <!-- Hidden audio upload -->
+  <input type="file" id="audioUpload" accept="audio/*" onchange="loadCustomAudio(this)" style="display:none;">
+</div>
+
+<!-- Settings Button -->
+<button class="settings-btn" id="settingsBtn" onclick="toggleSettings()">⚙️</button>
+
+<!-- Settings Panel -->
+<div class="settings-panel hidden" id="settingsPanel">
+  <div class="settings-content">
+    <h3>🎨 Customize App</h3>
+    
+    <!-- Background Image Upload -->
+    <div class="setting-item">
+      <label>🖼️ Background Image</label>
+      <div class="upload-box" onclick="document.getElementById('bgImageUpload').click()">
+        <span>📷 Upload Image</span>
+      </div>
+      <input type="file" id="bgImageUpload" accept="image/*" onchange="setBackgroundImage(this)" style="display:none;">
+      <button class="reset-btn" onclick="resetBackground()">Reset Background</button>
+    </div>
+    
+    <!-- Audio Upload -->
+    <div class="setting-item">
+      <label>🎵 Background Music</label>
+      <div class="upload-box" onclick="document.getElementById('audioUpload').click()">
+        <span>🎶 Upload Audio</span>
+      </div>
+      <p class="setting-hint">MP3, WAV, OGG supported</p>
+    </div>
+    
+    <!-- Volume Control -->
+    <div class="setting-item">
+      <label>🔊 Music Volume</label>
+      <input type="range" id="volumeSlider" min="0" max="100" value="30" onchange="setVolume(this.value)">
+      <span id="volumeValue">30%</span>
+    </div>
+    
+    <button class="close-settings" onclick="toggleSettings()">✕ Close</button>
+  </div>
 </div>
 
 <!-- PWA Install Button -->
@@ -122,6 +162,13 @@
         <input type="text" id="partnerName" placeholder="Enter name..." value="Pavithra">
       </div>
       
+      <!-- Message Language -->
+      <div class="language-selector" style="margin-bottom: 15px;">
+        <button class="lang-btn active" data-msglang="english" onclick="setMsgLanguage('english')">🇬🇧 English</button>
+        <button class="lang-btn" data-msglang="tamil" onclick="setMsgLanguage('tamil')">🇮🇳 தமிழ்</button>
+        <button class="lang-btn" data-msglang="tanglish" onclick="setMsgLanguage('tanglish')">🔤 Tanglish</button>
+      </div>
+      
       <div class="message-types">
         <button class="type-btn active" data-type="romantic">💕 Romantic</button>
         <button class="type-btn" data-type="funny">😄 Funny</button>
@@ -147,19 +194,40 @@
     <!-- Love Letter Generator -->
     <div class="card glass-card">
       <h2 class="section-title">💌 Love Letter Generator</h2>
+      
+      <!-- Language Selector -->
+      <div class="language-selector">
+        <button class="lang-btn active" data-lang="english" onclick="setLanguage('english')">
+          🇬🇧 English
+        </button>
+        <button class="lang-btn" data-lang="tamil" onclick="setLanguage('tamil')">
+          🇮🇳 தமிழ்
+        </button>
+        <button class="lang-btn" data-lang="tanglish" onclick="setLanguage('tanglish')">
+          🔤 Tanglish
+        </button>
+      </div>
+      
       <div class="input-group">
-        <label>How do you feel?</label>
+        <label id="feelingLabel">How do you feel?</label>
         <select id="feelingSelect">
-          <option value="deeply">Deeply in love</option>
-          <option value="grateful">Grateful</option>
-          <option value="missing">Missing them</option>
-          <option value="excited">Excited about future</option>
+          <option value="deeply">Deeply in love / ஆழமான காதல்</option>
+          <option value="grateful">Grateful / நன்றியுள்ள</option>
+          <option value="missing">Missing them / நினைவு</option>
+          <option value="excited">Excited about future / எதிர்காலம்</option>
         </select>
       </div>
       <button onclick="generateLetter()" class="generate-btn">
         📜 Generate Love Letter
       </button>
       <div class="letter-output" id="letterOutput"></div>
+      
+      <!-- Copy & Share -->
+      <div class="letter-actions">
+        <button onclick="copyLetter()" class="action-btn">📋 Copy</button>
+        <button onclick="shareLetter()" class="action-btn">📤 Share</button>
+        <button onclick="speakLetter()" class="action-btn">🔊 Read Aloud</button>
+      </div>
     </div>
   </section>
 
